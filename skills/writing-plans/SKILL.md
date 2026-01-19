@@ -1,98 +1,95 @@
 ---
 name: writing-plans
-description: Use when you have a spec or requirements for a multi-step task, before touching code
+description: Use when a design document exists and needs to be converted into atomic, test-driven engineering tasks.
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # Writing Plans
 
 ## Overview
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
+This skill translates a high-level Design Document into a step-by-step TDD implementation plan. It assumes the person executing the plan (you or another agent) has **zero context** and **must** be guided by strict, atomic instructions.
 
-Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
+**Core Principle:** A plan is a series of verifications. If a step cannot be verified, it is not a valid step.
 
-**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
+## When to Use
 
-**Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>-plan.md`
+- Use **ONLY** after a design document has been created (see `brainstorming`).
+- Use before writing any implementation code.
 
-## Bite-Sized Task Granularity
+## The Iron Rules of Planning
 
-**Each step is one action (2-5 minutes):**
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
-- "Commit" - step
+1.  **Atomic Granularity:** Each step must take 2-5 minutes to execute.
+2.  **Test-Driven:** Steps must follow Red-Green-Refactor.
+3.  **No "Implement Feature":** specific file edits only.
+4.  **No Context Required:** The plan must contain the code snippets or exact logic needed.
 
-## Plan Document Header
+## The Process
 
-**Every plan MUST start with this header:**
+### Step 1: Read the Design
+Read the specific design file from `docs/designs/`. Do not guess the requirements.
+
+### Step 2: Create the Plan File
+**Create file:** `docs/plans/YYYY-MM-DD-<topic>-plan.md`
+
+**Required Header:**
+```markdown
+# Implementation Plan - [Topic]
+
+> **Reference:** `docs/designs/YYYY-MM-DD-<topic>-design.md`
+> **Execution:** Use `executing-plans` skill.
+```
+
+### Step 3: Write the Tasks (TDD Format)
+
+Break the feature into `Task 1`, `Task 2`, etc. Inside each task, use this **Mandatory Structure**:
 
 ```markdown
-# [Feature Name] Implementation Plan
+### Task [N]: [Name]
 
-> **For Claude:** REQUIRED SUB-SKILL: Use executing-plans to implement this plan task-by-task.
+**Goal:** [One sentence]
 
-**Goal:** [One sentence describing what this builds]
+**Step 1: Write the Failing Test**
+- File: `tests/path/to/test.ts`
+- Code:
+  ```typescript
+  // Paste the EXACT test case code here
+  ```
 
-**Architecture:** [2-3 sentences about approach]
+**Step 2: Run Test (Red)**
+- Command: `npm test tests/path/to/test.ts`
+- Expect: "Fail: function not found"
 
-**Tech Stack:** [Key technologies/libraries]
+**Step 3: Implementation (Green)**
+- File: `src/path/to/source.ts`
+- Action: Write minimal code to pass test.
+- Guidance: [Specific logic or snippet]
 
----
+**Step 4: Verify (Green)**
+- Command: `npm test tests/path/to/test.ts`
+- Expect: PASS
+
+**Step 5: Git Commit**
+- Command: `git add . && git commit -m "feat: [task name]"`
 ```
 
-## Task Structure
+### Step 4: Commit the Plan
 
-```markdown
-### Task N: [Component Name]
+Once the plan is written:
+1.  Ask the user to review the plan.
+2.  **Commit the plan:**
+    ```bash
+    git add docs/plans/YYYY-MM-DD-<topic>-plan.md
+    git commit -m "plan: add implementation plan for <topic>"
+    ```
 
-**Files:**
-- Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
-- Test: `tests/exact/path/to/test.py`
+## Red Flags - STOP
 
-**Step 1: Write the failing test**
+- **Vague Steps:** "Add validation" is a failure. Write: "Add `if (!email) throw Error` to line 45".
+- **Missing Verifications:** Every code change must have a corresponding verification command.
+- **Batching too much:** If a task touches >3 files, split it.
 
-```python
-def test_specific_behavior():
-    result = function(input)
-    assert result == expected
-```
+## Deliverable
 
-**Step 2: Run test to verify it fails**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: FAIL with "function not defined"
-
-**Step 3: Write minimal implementation**
-
-```python
-def function(input):
-    return expected
-```
-
-**Step 4: Run test to verify it passes**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: PASS
-
-**Step 5: Commit**
-
-```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
-```
-```
-
-## Remember
-- Exact file paths always
-- Complete code in plan (not "add validation")
-- Exact commands with expected output
-- Reference relevant skills with @ syntax
-- DRY, YAGNI, TDD, frequent commits
-
-## After the Plan
-
-- Plan complete and saved to `docs/plans/YYYY-MM-DD-<feature-name>-plan.md`
-- Commit the plan document to git
+A committed, TDD-structured Markdown file in `docs/plans/`.

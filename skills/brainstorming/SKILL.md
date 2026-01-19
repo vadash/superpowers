@@ -1,49 +1,94 @@
 ---
 name: brainstorming
-description: "Explores requirements and design before implementation."
+description: Use when the user provides a raw idea, feature request, or problem statement that needs architectural definition before planning.
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # Brainstorming Ideas Into Designs
 
 ## Overview
 
-Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
+This skill converts vague ideas into concrete, committed design documents. It forces a "Measure Twice, Cut Once" discipline by refusing to write code or plans until the architecture is validated.
 
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design in small sections (200-300 words), checking after each section whether it looks right so far.
+**Core Principle:** ambiguous requirements lead to buggy code. We eliminate ambiguity through interrogation before we build.
+
+## When to Use
+
+- Use when starting a new feature or project.
+- Use when requirements are vague (e.g., "Build a login system").
+- Use when the user asks "How should we build X?".
 
 ## The Process
 
-**Understanding the idea:**
-- Check out the current project state first (files, docs, recent commits)
-- Ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
+### Phase 1: Context & Interrogation
 
-**Exploring approaches:**
-- Propose 2-3 different approaches with trade-offs
-- Present options conversationally with your recommendation and reasoning
-- Lead with your recommended option and explain why
+**1. Gather Context**
+Before asking questions, read the current project state to avoid asking obvious things.
+- `ls -R` key directories.
+- Read `README.md` or existing architecture docs.
 
-**Presenting the design:**
-- Once you believe you understand what you're building, present the design
-- Break it into sections of 200-300 words
-- Ask after each section whether it looks right so far
-- Cover: architecture, components, data flow, error handling, testing
-- Be ready to go back and clarify if something doesn't make sense
+**2. The Interrogation Loop**
+Do not propose a solution immediately. Ask questions to narrow the scope.
+- **Rule:** Ask 1-3 targeted questions per turn.
+- **Rule:** Prefer multiple-choice questions to reduce user friction.
+- **Stop Condition:** When you can articulate the *Data Structure*, *Interface*, and *Edge Cases* clearly.
 
-## After the Design
+### Phase 2: Proposal & Trade-offs
 
-**Documentation:**
-- Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
-- Use elements-of-style:writing-clearly-and-concisely skill if available
-- Commit the design document to git
+Present 2-3 distinct architectural approaches.
+- **Option A:** The "Simple/Naive" approach (Fast, minimal deps).
+- **Option B:** The "Robust/Scalable" approach (More complex, future-proof).
+- **Recommendation:** Explicitly recommend one and explain *why* based on the user's constraints.
 
-## Key Principles
+### Phase 3: The Design Document
 
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** - Remove unnecessary features from all designs
-- **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design in sections, validate each
-- **Be flexible** - Go back and clarify when something doesn't make sense
+Once an approach is selected, you **MUST** write a design document. Do not skip this.
+
+**Create file:** `docs/designs/YYYY-MM-DD-<topic>-design.md`
+
+**Required Template Structure:**
+```markdown
+# Design: [Topic]
+
+## 1. Problem Statement
+What are we solving?
+
+## 2. Goals & Non-Goals
+- Must do: ...
+- Won't do: ...
+
+## 3. Proposed Architecture
+- High-level approach
+- Key components
+
+## 4. Data Models / Schema
+(Use code blocks for JSON/SQL schemas)
+
+## 5. Interface / API Design
+(Function signatures, API endpoints)
+
+## 6. Risks & Edge Cases
+- What happens if network fails?
+- What if input is empty?
+```
+
+### Phase 4: Validation & Commitment
+
+1. **Present the file content** to the user for review.
+2. **Iterate** based on feedback.
+3. **Commit the design:**
+   ```bash
+   git add docs/designs/YYYY-MM-DD-<topic>-design.md
+   git commit -m "docs: add design for <topic>"
+   ```
+
+## Red Flags - STOP
+
+- **User asks for code immediately:** Refuse. Explain that code written without design is technical debt.
+- **"I'll remember the design":** You won't. Write it down.
+- **Skipping the commit:** The workflow breaks if the design isn't in git.
+
+## Deliverable
+
+A committed Markdown file in `docs/designs/` containing the approved architecture.
