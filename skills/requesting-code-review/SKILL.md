@@ -1,15 +1,17 @@
 ---
 name: requesting-code-review
-description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
+description: Dispatches code-reviewer subagent to catch issues before they cascade. Use when completing tasks, implementing major features, before merging to main, or when user says "review this", "check my code", or "code review".
 ---
 
 # Requesting Code Review
+
+## Instructions
 
 Dispatch code-reviewer subagent to catch issues before they cascade.
 
 **Core principle:** Review early, review often.
 
-## When to Request Review
+### Step 1: Determine When to Review
 
 **Mandatory:**
 - After each task in subagent-driven development
@@ -21,26 +23,26 @@ Dispatch code-reviewer subagent to catch issues before they cascade.
 - Before refactoring (baseline check)
 - After fixing complex bug
 
-## How to Request
+### Step 2: Get Git SHAs
 
-**1. Get git SHAs:**
 ```bash
 BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch code-reviewer subagent:**
+### Step 3: Dispatch Code-Reviewer Subagent
 
 Use Task tool with code-reviewer type, fill template at `code-reviewer.md`
 
 **Placeholders:**
-- `{WHAT_WAS_IMPLEMENTED}` - What you just built
-- `{PLAN_OR_REQUIREMENTS}` - What it should do
-- `{BASE_SHA}` - Starting commit
-- `{HEAD_SHA}` - Ending commit
-- `{DESCRIPTION}` - Brief summary
+- `{WHAT_WAS_IMPLEMENTED}` — What you just built
+- `{PLAN_OR_REQUIREMENTS}` — What it should do
+- `{BASE_SHA}` — Starting commit
+- `{HEAD_SHA}` — Ending commit
+- `{DESCRIPTION}` — Brief summary
 
-**3. Act on feedback:**
+### Step 4: Act on Feedback
+
 - Fix Critical issues immediately
 - Fix Important issues before proceeding
 - Note Minor issues for later
@@ -102,4 +104,4 @@ You: [Fix progress indicators]
 - Show code/tests that prove it works
 - Request clarification
 
-See template at: requesting-code-review/code-reviewer.md
+See template at: `requesting-code-review/code-reviewer.md`
